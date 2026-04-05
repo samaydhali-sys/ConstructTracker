@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🏗️ Construction Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="charts.js" defer></script>
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>🏗️ Construction Progress Tracker</h1>
+    </header>
+
+    <section id="add-task">
+        <input type="text" id="task-name" placeholder="Task Name">
+        <input type="number" id="planned" placeholder="Planned %" min="0" max="100">
+        <button id="add-btn">Add Task</button>
+    </section>
+
+    <section id="tasks"></section>
+
+    <section id="graph">
+        <canvas id="progressChart"></canvas>
+    </section>
+
+    <section id="notifications"></section>
+</body>
+</html>
