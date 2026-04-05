@@ -2,28 +2,296 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>🏗️ Construction Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConstructHub | Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="charts.js" defer></script>
-    <script src="app.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>🏗️ Construction Progress Tracker</h1>
+    <!-- Top Navigation -->
+    <header class="top-navbar">
+        <div class="logo">
+            <h2>ConstructHub</h2>
+        </div>
+        <nav class="nav-links">
+            <a href="#" class="nav-tab active" data-target="dashboard-view">Dashboard</a>
+            <a href="#" class="nav-tab" data-target="projects-view">Projects</a>
+            <a href="#" class="nav-tab" data-target="team-view">Team Details</a>
+        </nav>
+        <div class="header-right">
+            <!-- Notifications Dropdown -->
+            <div class="notification-container" id="notif-toggle">
+                <i class="fa-solid fa-bell"></i>
+                <span class="notif-badge">2</span>
+                <div class="notif-dropdown" id="notif-dropdown">
+                    <h4>Alert & Notification System</h4>
+                    <div class="notif-item alert">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <p><strong>Delay Alert:</strong> Road Expansion predicted delayed by 5 days (AI Prediction).</p>
+                            <small>Just now</small>
+                        </div>
+                    </div>
+                    <div class="notif-item">
+                        <i class="fa-solid fa-image"></i>
+                        <div>
+                            <p><strong>Image Verification:</strong> Site Development uploaded daily progress photo.</p>
+                            <small>2 hours ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Profile -->
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Samay&background=random" alt="Samay avatar" id="user-avatar">
+                <span class="user-name">Samay <i class="fa-solid fa-chevron-down"></i></span>
+            </div>
+        </div>
     </header>
 
-    <section id="add-task">
-        <input type="text" id="task-name" placeholder="Task Name">
-        <input type="number" id="planned" placeholder="Planned %" min="0" max="100">
-        <button id="add-btn">Add Task</button>
-    </section>
+    <main class="main-container">
+        <!-- ======================= -->
+        <!-- DASHBOARD VIEW          -->
+        <!-- ======================= -->
+        <div id="dashboard-view" class="view-section active">
+            <!-- Metrics Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card teal-card">
+                    <div class="metric-info"><p>Total Projects</p></div>
+                    <div class="metric-bubble"><span id="total-projects">8</span></div>
+                </div>
+                <div class="metric-card blue-card">
+                    <div class="metric-info"><p>In Progress</p></div>
+                    <div class="metric-bubble"><span id="in-progress">3</span></div>
+                </div>
+                <div class="metric-card orange-card">
+                    <div class="metric-info"><p>Completed</p></div>
+                    <div class="metric-bubble"><span id="completed-projects">5</span></div>
+                </div>
+                <div class="metric-card red-card">
+                    <div class="metric-info"><p>Pending Tasks</p></div>
+                    <div class="metric-bubble"><span id="pending-tasks">12</span></div>
+                </div>
+            </div>
 
-    <section id="tasks"></section>
+            <!-- Dashboard Project List Preview -->
+            <section class="card project-list-card">
+                <div class="card-header">
+                    <h2>Project Quick View</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Status</th>
+                            <th>Deadline</th>
+                            <th>Team Members</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-projects-body">
+                        <!-- Cloned via JS -->
+                    </tbody>
+                </table>
+            </section>
 
-    <section id="graph">
-        <canvas id="progressChart"></canvas>
-    </section>
+            <!-- Bottom Grids -->
+            <div class="bottom-grid">
+                <section class="card activity-card">
+                    <div class="card-header borderless">
+                        <h3>Daily Progress & Activities</h3>
+                    </div>
+                    <div class="activity-list" id="activity-list"></div>
+                </section>
+                <section class="card team-card">
+                    <div class="card-header borderless">
+                        <h3>Active Team Preview</h3>
+                    </div>
+                    <div class="team-grid" id="team-grid-preview"></div>
+                </section>
+            </div>
+        </div>
 
-    <section id="notifications"></section>
+        <!-- ======================= -->
+        <!-- PROJECTS VIEW           -->
+        <!-- ======================= -->
+        <div id="projects-view" class="view-section" style="display: none;">
+            <section class="card project-list-card">
+                <div class="card-header">
+                    <h2>All Projects Management</h2>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Search projects...">
+                        </div>
+                        <button class="btn btn-primary" id="add-project-btn">Add New Project</button>
+                    </div>
+                </div>
+                
+                <!-- Add Form inline -->
+                <div id="add-project-form" style="display:none; padding: 20px; background: #f9fbfd; border-bottom: 1px solid var(--border-color);">
+                    <div style="display: flex; gap: 15px;">
+                        <input type="text" id="new-project-name" placeholder="Project Name" style="padding:8px; border:1px solid #ddd; border-radius:4px; flex:1;">
+                        <select id="new-project-status" style="padding:8px; border:1px solid #ddd; border-radius:4px;">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                        <button id="submit-project-btn" class="btn btn-primary">Create</button>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Status</th>
+                            <th>Deadline</th>
+                            <th>Progress (Plan vs Actual)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projects-table-body">
+                        <!-- Project rows injected via JS -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- ======================= -->
+        <!-- TEAM & CHAT VIEW        -->
+        <!-- ======================= -->
+        <div id="team-view" class="view-section" style="display: none;">
+            <div class="team-layout">
+                
+                <!-- Left: Team Directory -->
+                <div class="team-directory">
+                    <section class="card">
+                        <div class="card-header">
+                            <h2>Multi-User Access Directory</h2>
+                        </div>
+                        
+                        <!-- Role Tabs -->
+                        <div class="role-tabs">
+                            <button class="role-btn active" data-role="all">All</button>
+                            <button class="role-btn" data-role="manager">Managers</button>
+                            <button class="role-btn" data-role="engineer">Engineers</button>
+                            <button class="role-btn" data-role="worker">Workers</button>
+                            <button class="role-btn" data-role="client">Clients</button>
+                        </div>
+                        
+                        <div class="full-team-list" id="full-team-list">
+                            <!-- Injected via JS -->
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right: Team Chat Discussion -->
+                <div class="team-chat">
+                    <section class="card chat-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-comments"></i> Team Discussion</h2>
+                        </div>
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Messages -->
+                            <div class="msg received">
+                                <strong>Ananya (Engineer)</strong>
+                                <p>Site development images uploaded.</p>
+                                <small>10:15 AM</small>
+                            </div>
+                            <div class="msg sent">
+                                <strong>You (Manager)</strong>
+                                <p>Great. Any delay predictions for the next phase?</p>
+                                <small>10:18 AM</small>
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-input" placeholder="Type a message...">
+                            <button id="send-chat-btn" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </section>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ======================= -->
+    <!-- EDIT PROJECT MODAL      -->
+    <!-- ======================= -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Project Information</h2>
+                <button class="close-modal" id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-project-id">
+                
+                <div class="form-group">
+                    <label>Project Name</label>
+                    <input type="text" id="edit-project-name">
+                </div>
+
+                <div class="form-group row">
+                    <div style="flex:1;">
+                        <label>Status</label>
+                        <select id="edit-project-status">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div style="flex:1;">
+                        <label>Deadline</label>
+                        <input type="text" id="edit-project-deadline">
+                    </div>
+                </div>
+
+                <!-- Planned vs Actual -->
+                <div class="form-group">
+                    <label><strong>Planned vs Actual Progress</strong></label>
+                    <div class="progress-sliders">
+                        <div>
+                            <label>Planned (%)</label>
+                            <input type="number" id="edit-planned" min="0" max="100">
+                        </div>
+                        <div>
+                            <label>Actual (%)</label>
+                            <input type="number" id="edit-actual" min="0" max="100">
+                        </div>
+                    </div>
+                    <!-- AI Delay Prediction Mock -->
+                    <div class="ai-prediction" id="ai-prediction-badge" style="display:none;">
+                        <i class="fa-solid fa-robot"></i> <span>Delay Prediction Active: Actual progress lagging behind Planned by > 20%. Expected delay: 5 days.</span>
+                    </div>
+                </div>
+
+                <!-- Image Verification -->
+                <div class="form-group">
+                    <label><strong>Image-Based Verification (Site Proof)</strong></label>
+                    <div class="upload-area">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>Drag & drop site progress photos here</p>
+                        <input type="file" style="display:none;" id="file-upload">
+                        <button class="btn btn-secondary" onclick="document.getElementById('file-upload').click()">Browse Files</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-modal">Cancel</button>
+                <button class="btn btn-primary" id="save-modal">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js" defer></script>
 </body>
 </html>

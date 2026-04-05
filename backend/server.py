@@ -44,6 +44,16 @@ def add_task():
     write_data(data)
     return jsonify(task), 201
 
+# API: Get single task
+@app.route("/api/tasks/<int:task_id>", methods=["GET"])
+def get_task(task_id):
+    data = read_data()
+    task = next((t for t in data["tasks"] if t["id"] == task_id), None)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+    return jsonify(task)
+
+
 # API: Update task
 @app.route("/api/tasks/<int:task_id>", methods=["PUT"])
 def update_task(task_id):
